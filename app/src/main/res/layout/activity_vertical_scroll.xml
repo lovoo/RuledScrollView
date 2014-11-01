@@ -9,6 +9,7 @@
                 tools:context=".ExampleActivity">
 
     <de.mario222k.ruledscrollview.RuledScrollView
+        android:id="@+id/ruled_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#FF000000">
