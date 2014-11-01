@@ -50,6 +50,8 @@ public class RuledScrollView extends ScrollView {
      * stored pointer id to support "finger walk scrolling"
      */
     private int mActivePointerId = 0;
+
+    private Rule mRule = new Rule();;
     //endregion
 
     //region constructors
@@ -72,6 +74,7 @@ public class RuledScrollView extends ScrollView {
     /**
      * dispatchTouchEvent will cause an faked {@code ACTION_DOWN} event
      * if this view has:
+     * - {@link Rule}.overtakeTouchAgain is {@code true}
      * - not intercepted move event
      * - not handled down event
      * - can scroll in dispatched direction
@@ -82,12 +85,12 @@ public class RuledScrollView extends ScrollView {
     @Override
     public boolean dispatchTouchEvent ( @NonNull MotionEvent ev ) {
 
-        if (ev.getActionMasked() == MotionEvent.ACTION_MOVE && mInterceptMode < 0 && !mHasConsumedDown) {
+        if (mRule.overtakeTouchAgain && ev.getActionMasked() == MotionEvent.ACTION_MOVE && mInterceptMode < 0 && !mHasConsumedDown) {
             updateTouchDirection(ev);
             if (mTouchAxis > 0) {
                 // intercept event only if scrollable
                 if (canScrollVertically(mTouchDirection) && !oneChildCanScroll(getChildAt(0))) {
-                    Log.w("TEST", "dispatch fake down even: " + ev.getX() + ", " + ev.getY());
+                    Log.w("TEST", "dispatch fake down event: " + ev.getX() + ", " + ev.getY());
                     MotionEvent fakeEvent = MotionEvent.obtain(ev);
                     fakeEvent.setAction(MotionEvent.ACTION_DOWN);
                     return super.dispatchTouchEvent(fakeEvent);
@@ -96,7 +99,7 @@ public class RuledScrollView extends ScrollView {
             } else {
                 // intercept event only if scrollable
                 if (canScrollHorizontally(mTouchDirection) && !oneChildCanScroll(getChildAt(0))) {
-                    Log.w("TEST", "dispatch fake down even: " + ev.getX() + ", " + ev.getY());
+                    Log.w("TEST", "dispatch fake down event: " + ev.getX() + ", " + ev.getY());
                     MotionEvent fakeEvent = MotionEvent.obtain(ev);
                     fakeEvent.setAction(MotionEvent.ACTION_DOWN);
                     return super.dispatchTouchEvent(fakeEvent);
@@ -141,14 +144,14 @@ public class RuledScrollView extends ScrollView {
                         if (Math.abs(mTouchDirection) > mTouchSlop) {
                             // intercept event only if scrollable
                             mInterceptMode = (canScrollVertically(mTouchDirection) && !oneChildCanScroll(getChildAt(0))) ? 1 : -1;
-                            Log.d("TEST", "intercept move even: " + mInterceptMode + "(" + ev.getX() + ", " + ev.getY() + ")");
+                            Log.d("TEST", "intercept move event: " + mInterceptMode + "(" + ev.getX() + ", " + ev.getY() + ")");
                             return mInterceptMode > 0;
                         }
                     } else {
                         if (Math.abs(mTouchDirection) > mTouchSlop) {
                             // intercept event only if scrollable
                             mInterceptMode = (canScrollHorizontally(mTouchDirection) && !oneChildCanScroll(getChildAt(0))) ? 1 : -1;
-                            Log.d("TEST", "intercept move even: " + mInterceptMode + "(" + ev.getX() + ", " + ev.getY() + ")");
+                            Log.d("TEST", "intercept move event: " + mInterceptMode + "(" + ev.getX() + ", " + ev.getY() + ")");
                             return mInterceptMode > 0;
                         }
                     }
@@ -182,13 +185,28 @@ public class RuledScrollView extends ScrollView {
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 mHasConsumedDown = super.onTouchEvent(ev);
+                Log.d("TEST", "touch event consumedDown: " + mHasConsumedDown);
                 return mHasConsumedDown;
 
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 mHasConsumedDown = false;
+                //noinspection ConstantConditions
+                Log.d("TEST", "touch event consumedDown: " + mHasConsumedDown);
         }
         return super.onTouchEvent(ev);
+    }
+    //endregion
+
+    //region public methods
+    public void setRule (Rule rule) {
+        if(rule == null) {
+            rule = new Rule();
+        }
+        mRule = rule;
+    }
+    public Rule getRule() {
+        return mRule;
     }
     //endregion
 
