@@ -19,31 +19,11 @@ But why only one direction and one axis?
 
 ##Solution##
 Create a custom **ScrollView** with an full implemented *onInterceptTouchEvent(MotionEvent event)* method. Enable some configuration with custom rules:
-**RuledScrollView**.*setRule(int direction, int mode, boolean intercept)*
+**RuledScrollView**.*setRule(Rule rule)*
 
-direction:
- - **RuledScrollView**.*DIRECTION_UP*
- - **RuledScrollView**.*DIRECTION_DOWN*
- - **RuledScrollView**.*DIRECTION_LEFT*
- - **RuledScrollView**.*DIRECTION_RIGHT*
+Rule let you enable/disable:
+ - if **RuledScrollView** should retake touch event, when an currently touch handled children can not scroll anymore
 
-mode:
- - **RuledScrollView**.*WHEN_SCROLLABLE*
- - **RuledScrollView**.*WHEN_ANOTHER_CHILD_SCROLLABLE*
-
-##Additional##
-We got a problem when our higher **ScrollContainer** and the lower one is scrollable at the same direction. The higher **View** will always consume the event, there for comes rule *WHEN_ANOTHER_CHILD_SCROLLABLE*. But how determine, if one child can scroll as well?
-
-Simply observe own children and remember all scrollable **Views**. These **Views** will be stored in a list and checked when rule *WHEN_ANOTHER_CHILD_SCROLLABLE* is active.
-> TODO: make an **MotionEvent**.*DOWN* hit test with child view
-> 
-> TODO: make an child view *getParent()*, *isScrollContainer()*, *isTouchable()* and *isEnabled()* check
-
-**RuledScrollView**.*OnAttach()* will cause an layout parse for all children:
- - all **ViewGroups** get an *onHierarchyChangeListener* (will trigger same parsing for there added **View**)
- - all **Views** or **ViewGroups** that are scroll container, will be add to list and get an *onDetachListener* (to remove view from list)
- 
-**RuledScrollView**.*OnDetach()* will clean up list and listener
 
 ##Benefits##
 
@@ -55,6 +35,7 @@ One full implemented **RuledScrollView** can be used to enable scrolling in comp
        <ScrollView>
          <CONTENTVIEW />
        </ScrollView>
+       <FOOTERVIEW />
    </LinearLayout>
 </RuledScrollView>`
 
@@ -68,9 +49,12 @@ Or one step further with dynamic layouts
 </RuledScrollView>`
 
 ##Problems##
-**RuledScrollView** wont be notified if one child change *View*.*isScrollContainer()* value.
+You will get some performance problems if you have done a really fancy view tree with a lot of **ViewGroups** and scrollable **Views**.
 
-You will get some performance problems if you add and remove child-views all over the time. Or you have done a really fancy view tree with a lot of **ViewGroups** and scrollable **Views**.
+##DOTO##
+ - create sample with fragment pager
+ - add more rules
+ - wait for feedback :)
 
-You can simply copy and paste code to get the same for **ListView** but be aware that **ListViews** will do a lot layout changes
-> TODO: possible solution ignore there children
+##License##
+This projected is licensed under the terms of the Apache License 2.0 license.
