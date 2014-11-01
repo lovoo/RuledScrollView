@@ -6,9 +6,10 @@ package de.mario222k.ruledscrollview;
 
 import android.content.Context;
 import android.graphics.PointF;
+import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -17,8 +18,41 @@ import android.widget.ScrollView;
 
 public class RuledScrollView extends ScrollView {
 
+    //region members
+    /**
+     * member to store touch config information
+     */
     private int mTouchSlop;
+    /**
+     * <0 : from up to down / from left to right
+     * >0 : from down to up / from right to left
+     */
+    private int mTouchDirection = 0;
+    /**
+     * <0 : x-axis
+     * >0 : y-axis
+     */
+    private int mTouchAxis = 0;
+    private boolean mHasConsumedDown = false;
+    /**
+     * 0: unknown
+     * +1: intercepted
+     * -1: not intercepted
+     */
+    private int mInterceptMode = 0;
 
+    /**
+     * stored down event position
+     */
+    private PointF mDownPoint = null;
+
+    /**
+     * stored pointer id to support "finger walk scrolling"
+     */
+    private int mActivePointerId = 0;
+    //endregion
+
+    //region constructors
     public RuledScrollView ( Context context ) {
         this(context, null);
     }
@@ -29,51 +63,95 @@ public class RuledScrollView extends ScrollView {
 
     public RuledScrollView ( Context context, AttributeSet attrs, int defStyle ) {
         super(context, attrs, defStyle);
-
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
+    //endregion
 
-    private PointF mDownPoint = null;
-    private int mActivePointerId = 0;
+    //region touch handling
+
+    /**
+     * dispatchTouchEvent will cause an faked {@code ACTION_DOWN} event
+     * if this view has:
+     * - not intercepted move event
+     * - not handled down event
+     * - can scroll in dispatched direction
+     * - no other child can scroll in dispatched direction
+     * <p/>
+     * {@inheritDoc}
+     */
     @Override
-    public boolean onInterceptTouchEvent ( MotionEvent ev ) {
+    public boolean dispatchTouchEvent ( @NonNull MotionEvent ev ) {
 
-        switch(ev.getActionMasked()) {
+        if (ev.getActionMasked() == MotionEvent.ACTION_MOVE && mInterceptMode < 0 && !mHasConsumedDown) {
+            updateTouchDirection(ev);
+            if (mTouchAxis > 0) {
+                // intercept event only if scrollable
+                if (canScrollVertically(mTouchDirection) && !oneChildCanScroll(getChildAt(0))) {
+                    Log.w("TEST", "dispatch fake down even: " + ev.getX() + ", " + ev.getY());
+                    MotionEvent fakeEvent = MotionEvent.obtain(ev);
+                    fakeEvent.setAction(MotionEvent.ACTION_DOWN);
+                    return super.dispatchTouchEvent(fakeEvent);
+                }
+
+            } else {
+                // intercept event only if scrollable
+                if (canScrollHorizontally(mTouchDirection) && !oneChildCanScroll(getChildAt(0))) {
+                    Log.w("TEST", "dispatch fake down even: " + ev.getX() + ", " + ev.getY());
+                    MotionEvent fakeEvent = MotionEvent.obtain(ev);
+                    fakeEvent.setAction(MotionEvent.ACTION_DOWN);
+                    return super.dispatchTouchEvent(fakeEvent);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    /**
+     * intercept touch when no view (children), except this can scroll
+     * <p/>
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean onInterceptTouchEvent ( @NonNull MotionEvent ev ) {
+
+        switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 // store event initial values
+                mInterceptMode = 0;
                 mDownPoint = new PointF(ev.getX(), ev.getY());
                 mActivePointerId = MotionEventCompat.getPointerId(ev, 0);
+                Log.i("TEST", "intercept down even: " + ev.getX() + ", " + ev.getY());
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                if(mActivePointerId == -1) {
+                if (mActivePointerId == -1) {
                     // invalid pointer id
+                    mInterceptMode = 0;
                     return false;
                 }
                 final int pointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
                 if (pointerIndex < 0) {
                     // invalid touch event
+                    mInterceptMode = 0;
                     return false;
                 }
-                if(mDownPoint != null) {
-                    final float x = MotionEventCompat.getX(ev, pointerIndex);
-                    final float y = MotionEventCompat.getY(ev, pointerIndex);
-                    int dX = (int) (mDownPoint.x - x); // inverted delta (old - new value)
-                    int dY = (int) (mDownPoint.y - y); // inverted delta (old - new value)
-                    if(Math.abs(dY) > Math.abs(dX)) {
-                        if(Math.abs(dY) > mTouchSlop) {
+                if (mDownPoint != null) {
+                    updateTouchDirection(ev);
+                    if (mTouchAxis > 0) {
+                        if (Math.abs(mTouchDirection) > mTouchSlop) {
                             // intercept event only if scrollable
-                            // TODO: lock if child is scrollable as well
-                            return canScrollVertically(dY) && !oneChildCanScroll(getChildAt(0), 0, dY);
+                            mInterceptMode = (canScrollVertically(mTouchDirection) && !oneChildCanScroll(getChildAt(0))) ? 1 : -1;
+                            Log.d("TEST", "intercept move even: " + mInterceptMode + "(" + ev.getX() + ", " + ev.getY() + ")");
+                            return mInterceptMode > 0;
                         }
                     } else {
-                        if(Math.abs(dX) > mTouchSlop) {
+                        if (Math.abs(mTouchDirection) > mTouchSlop) {
                             // intercept event only if scrollable
-                            // TODO: lock if child is scrollable as well
-                            return canScrollHorizontally(dX) && !oneChildCanScroll(getChildAt(0), 1, dX);
+                            mInterceptMode = (canScrollHorizontally(mTouchDirection) && !oneChildCanScroll(getChildAt(0))) ? 1 : -1;
+                            Log.d("TEST", "intercept move even: " + mInterceptMode + "(" + ev.getX() + ", " + ev.getY() + ")");
+                            return mInterceptMode > 0;
                         }
                     }
-
                 }
                 break;
 
@@ -85,58 +163,113 @@ public class RuledScrollView extends ScrollView {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 // reset event values
+                mInterceptMode = 0;
                 mActivePointerId = -1;
                 mDownPoint = null;
+                Log.e("TEST", "cancel");
                 break;
         }
         return super.onInterceptTouchEvent(ev);
     }
 
+    /**
+     * overridden to remember if touch down event was originally handled by this view
+     * <p/>
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean onTouchEvent ( @NonNull MotionEvent ev ) {
+        switch (ev.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                mHasConsumedDown = super.onTouchEvent(ev);
+                return mHasConsumedDown;
 
-    private void onSecondaryPointerUp(MotionEvent ev) {
-        final int pointerIndex = MotionEventCompat.getActionIndex(ev);
-        final int pointerId = MotionEventCompat.getPointerId(ev, pointerIndex);
-        if (pointerId == mActivePointerId) {
-            // This was our active pointer going up. Choose a new
-            // active pointer and adjust accordingly.
-            final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
-//            mLastMotionY = MotionEventCompat.getY(ev, newPointerIndex);
-            mActivePointerId = MotionEventCompat.getPointerId(ev, newPointerIndex);
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_UP:
+                mHasConsumedDown = false;
+        }
+        return super.onTouchEvent(ev);
+    }
+    //endregion
+
+    //region helper methods
+
+    private void updateTouchDirection ( MotionEvent ev ) {
+        if(mActivePointerId != -1) {
+            final int pointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
+            if (pointerIndex >= 0) {
+                final float x = MotionEventCompat.getX(ev, pointerIndex);
+                final float y = MotionEventCompat.getY(ev, pointerIndex);
+                int dX = (int) (mDownPoint.x - x); // inverted delta (old - new value)
+                int dY = (int) (mDownPoint.y - y); // inverted delta (old - new value)
+                mTouchAxis = Math.abs(dY) - Math.abs(dX);
+                if (mTouchAxis > 0) {
+                    Log.v("TEST", "direction: " + mTouchDirection + " --> " + dY);
+                    mTouchDirection = dY;
+                } else {
+                    Log.v("TEST", "direction: " + mTouchDirection + " --> " + dX);
+                    mTouchDirection = dX;
+                }
+            }
         }
     }
 
-    private boolean oneChildCanScroll (View v, int axis, int direction) {
-        if(v == null) {
+    /**
+     * store new primary pointer if first pointer was removed
+     *
+     * @param ev triggered POINTER_UP event
+     */
+    private void onSecondaryPointerUp ( @NonNull MotionEvent ev ) {
+        if (mActivePointerId != -1) {
+            final int pointerIndex = MotionEventCompat.getActionIndex(ev);
+            final int pointerId = MotionEventCompat.getPointerId(ev, pointerIndex);
+            if (pointerId == mActivePointerId) {
+                // This was our active pointer going up. Choose a new
+                // active pointer and adjust accordingly.
+                final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
+                mActivePointerId = MotionEventCompat.getPointerId(ev, newPointerIndex);
+            }
+        }
+    }
+
+    /**
+     * recursive method to determine if an child view can scroll
+     *
+     * @param v view and its children that will be checked
+     * @return true if child or one of its children can scroll
+     */
+    protected boolean oneChildCanScroll ( View v ) {
+        if (v == null) {
             // invalid argument
             return false;
 
-        } else if(axis == 0 && !v.canScrollVertically(direction)) {
+        } else if (mTouchAxis > 0 && !v.canScrollVertically(mTouchDirection)) {
             // check all view children
             if (v instanceof ViewGroup) {
                 ViewGroup vg = (ViewGroup) v;
-                for(int i=0; i<vg.getChildCount(); i++) {
-                    if(vg.getChildAt(i).canScrollVertically(direction)) {
+                for (int i = 0; i < vg.getChildCount(); i++) {
+                    if (vg.getChildAt(i).canScrollVertically(mTouchDirection)) {
                         return true;
                     }
                 }
-                for(int i=0; i<vg.getChildCount(); i++) {
-                    if(oneChildCanScroll(vg.getChildAt(i), axis, direction)) {
+                for (int i = 0; i < vg.getChildCount(); i++) {
+                    if (oneChildCanScroll(vg.getChildAt(i))) {
                         return true;
                     }
                 }
             }
             return false;
-        } else if(axis == 1 && !v.canScrollHorizontally(direction)) {
+        } else if (mTouchAxis < 0 && !v.canScrollHorizontally(mTouchDirection)) {
             // check all view children
             if (v instanceof ViewGroup) {
                 ViewGroup vg = (ViewGroup) v;
-                for(int i=0; i<vg.getChildCount(); i++) {
-                    if(vg.getChildAt(i).canScrollHorizontally(direction)) {
+                for (int i = 0; i < vg.getChildCount(); i++) {
+                    if (vg.getChildAt(i).canScrollHorizontally(mTouchDirection)) {
                         return true;
                     }
                 }
-                for(int i=0; i<vg.getChildCount(); i++) {
-                    if(oneChildCanScroll(vg.getChildAt(i), axis, direction)) {
+                for (int i = 0; i < vg.getChildCount(); i++) {
+                    if (oneChildCanScroll(vg.getChildAt(i))) {
                         return true;
                     }
                 }
@@ -147,4 +280,5 @@ public class RuledScrollView extends ScrollView {
             return true;
         }
     }
+    //endregion
 }
