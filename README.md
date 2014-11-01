@@ -21,13 +21,13 @@ But why only one direction and one axis?
 Create a custom **ScrollView** with an full implemented *onInterceptTouchEvent(MotionEvent event)* method. Enable some configuration with custom rules:
 **RuledScrollView**.*setRule(Rule rule)*
 
-Rule let you enable/disable:
- - if **RuledScrollView** should retake touch event, when an currently touch handled children can not scroll anymore
+**Rule** let you enable/disable:
+ - if **RuledScrollView** should retake touch event, when an currently touch handled children can't scroll anymore
 
 
 ##Benefits##
 
-One full implemented **RuledScrollView** can be used to enable scrolling in complex Layouts like:
+One full implemented **RuledScrollView** can be used to enable scrolling in complex layouts like:
 
 `<RuledScrollView>
    <LinearLayout>
@@ -51,8 +51,8 @@ Or one step further with dynamic layouts
 ##Problems##
 You will get some performance problems if you have done a really fancy view tree with a lot of **ViewGroups** and scrollable **Views**.
 
-##DOTO##
- - create sample with fragment pager
+##Todo##
+ - create sample with an fragment pager
  - add more rules
  - wait for feedback :)
 
