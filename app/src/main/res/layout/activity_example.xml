@@ -20,15 +20,14 @@
 			android:layout_height="wrap_content"
 			android:orientation="vertical">
 
-			<View
-				android:layout_width="match_parent"
-				android:layout_height="300dp"
-				android:background="#FF00FF00"/>
 
-			<View
+			<TextView
 				android:layout_width="match_parent"
 				android:layout_height="300dp"
-				android:background="#FFFF0000"/>
+				android:background="#FFFF0000"
+			    android:gravity="bottom|left"
+			    android:text="I am a header"
+				/>
 
 			<ScrollView
 				android:layout_width="match_parent"
@@ -79,66 +78,6 @@
 				</LinearLayout>
 
 			</ScrollView>
-
-			<View
-				android:layout_width="match_parent"
-				android:layout_height="300dp"
-				android:background="#FF0000FF"/>
-
-			<ScrollView
-				android:layout_width="match_parent"
-				android:layout_height="400dp"
-				android:layout_margin="10dp"
-				android:id="@+id/innerScrollView2"
-				>
-
-				<LinearLayout
-					android:layout_width="match_parent"
-					android:layout_height="800dp"
-					android:orientation="vertical">
-
-					<View
-						android:layout_width="match_parent"
-						android:layout_height="200dp"
-						android:background="#FFDDDD00"/>
-
-					<Button
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:text="Click me"
-						android:onClick="onButtonClick"
-						/>
-
-					<View
-						android:layout_width="match_parent"
-						android:layout_height="200dp"
-						android:background="#FFAAAA00"/>
-
-					<View
-						android:layout_width="match_parent"
-						android:layout_height="200dp"
-						android:background="#FFFFFFFF"/>
-
-					<Button
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:text="Click me too"
-						android:onClick="onButtonClick"
-						/>
-
-					<View
-						android:layout_width="match_parent"
-						android:layout_height="200dp"
-						android:background="#FFFFFF00"/>
-
-				</LinearLayout>
-
-			</ScrollView>
-
-			<View
-				android:layout_width="match_parent"
-				android:layout_height="300dp"
-				android:background="#FF00F0F0"/>
 
 		</LinearLayout>
 

@@ -23,7 +23,6 @@ public class VerticalScrollActivity extends Activity {
 	private void init() {
 		final ScrollView outer = (ScrollView) findViewById(R.id.outerScrollView);
 		final ScrollView inner1 = (ScrollView) findViewById(R.id.innerScrollView1);
-		final ScrollView inner2 = (ScrollView) findViewById(R.id.innerScrollView2);
 
 		mTouchListener = new View.OnTouchListener() {
 			public float oldy;
@@ -39,17 +38,44 @@ public class VerticalScrollActivity extends Activity {
 						break;
 
 					case MotionEvent.ACTION_MOVE:
-						Log.d("XXX", "inner move");
 						// get direction of touch
 						dir = (int) (oldy - event.getY());
+						Log.d("XXX", "dir: " + dir);
+						if(dir > 1) {
+							Log.d("XXX", "inner move: scroll down");
+							// scroll down: always scroll parent down, then child
+							if(outer.canScrollVertically(dir)) {
+								outer.requestDisallowInterceptTouchEvent(false);
+							} else {
+								if(v.canScrollVertically(dir)) {
+									outer.requestDisallowInterceptTouchEvent(true);
+								} else {
+									outer.requestDisallowInterceptTouchEvent(false);
+
+								}
+							}
+						} else if(dir < 1){
+							Log.d("XXX", "inner move: scroll up");
+							// scroll up : always scroll child up first
+							if(v.canScrollVertically(dir)) {
+								outer.requestDisallowInterceptTouchEvent(true);
+							} else {
+								outer.requestDisallowInterceptTouchEvent(false);
+
+							}
+
+						}
+						oldy = event.getY();
+						return true;
 
 						// if we can scroll in this direction, please parent to not intercept event
+/*
 						if (v.canScrollVertically(dir)) {
 							outer.requestDisallowInterceptTouchEvent(true);
 						} else {
 							outer.requestDisallowInterceptTouchEvent(false);
 						}
-						break;
+*/
 
 					case MotionEvent.ACTION_UP:
 						Log.d("XXX", "inner up");
@@ -60,7 +86,6 @@ public class VerticalScrollActivity extends Activity {
 		};
 
 		inner1.setOnTouchListener(mTouchListener);
-		inner2.setOnTouchListener(mTouchListener);
 	}
 
 
