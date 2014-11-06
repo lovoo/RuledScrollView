@@ -2,8 +2,6 @@ package de.mario222k.ruledscrollview;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.Toast;
@@ -22,70 +20,9 @@ public class VerticalScrollActivity extends Activity {
 
 	private void init() {
 		final ScrollView outer = (ScrollView) findViewById(R.id.outerScrollView);
-		final ScrollView inner1 = (ScrollView) findViewById(R.id.innerScrollView1);
+		final MyScrollView inner1 = (MyScrollView) findViewById(R.id.innerScrollView1);
+		inner1.setScrollParent(outer);
 
-		mTouchListener = new View.OnTouchListener() {
-			public float oldy;
-			private int dir;
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				switch (event.getAction()) {
-
-					case MotionEvent.ACTION_DOWN:
-						oldy = event.getY(); // set start y pos
-						Log.d("XXX", "inner down");
-						break;
-
-					case MotionEvent.ACTION_MOVE:
-						// get direction of touch
-						dir = (int) (oldy - event.getY());
-						Log.d("XXX", "dir: " + dir);
-						if(dir > 1) {
-							Log.d("XXX", "inner move: scroll down");
-							// scroll down: always scroll parent down, then child
-							if(outer.canScrollVertically(dir)) {
-								outer.requestDisallowInterceptTouchEvent(false);
-							} else {
-								if(v.canScrollVertically(dir)) {
-									outer.requestDisallowInterceptTouchEvent(true);
-								} else {
-									outer.requestDisallowInterceptTouchEvent(false);
-
-								}
-							}
-						} else if(dir < 1){
-							Log.d("XXX", "inner move: scroll up");
-							// scroll up : always scroll child up first
-							if(v.canScrollVertically(dir)) {
-								outer.requestDisallowInterceptTouchEvent(true);
-							} else {
-								outer.requestDisallowInterceptTouchEvent(false);
-
-							}
-
-						}
-						oldy = event.getY();
-						return true;
-
-						// if we can scroll in this direction, please parent to not intercept event
-/*
-						if (v.canScrollVertically(dir)) {
-							outer.requestDisallowInterceptTouchEvent(true);
-						} else {
-							outer.requestDisallowInterceptTouchEvent(false);
-						}
-*/
-
-					case MotionEvent.ACTION_UP:
-						Log.d("XXX", "inner up");
-						break;
-				}
-				return false;
-			}
-		};
-
-		inner1.setOnTouchListener(mTouchListener);
 	}
 
 

@@ -26,10 +26,10 @@
 				android:layout_height="300dp"
 				android:background="#FFFF0000"
 			    android:gravity="bottom|left"
-			    android:text="I am a header"
+			    android:text="I am a section header"
 				/>
 
-			<ScrollView
+			<de.mario222k.ruledscrollview.MyScrollView
 				android:layout_width="match_parent"
 				android:layout_height="400dp"
 				android:layout_margin="10dp"
@@ -77,7 +77,7 @@
 
 				</LinearLayout>
 
-			</ScrollView>
+			</de.mario222k.ruledscrollview.MyScrollView>
 
 		</LinearLayout>
 
