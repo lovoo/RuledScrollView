@@ -18,11 +18,9 @@ Android updated there **ScrollView** *onInterceptTouchEvent(MotionEvent event)* 
 But why only one direction and one axis?
 
 ##Solution##
-Create a custom **ScrollView** with an full implemented *onInterceptTouchEvent(MotionEvent event)* method. Enable some configuration with custom rules:
-**RuledScrollView**.*setRule(Rule rule)*
+Create a custom **ScrollView** with an full implemented *onInterceptTouchEvent(MotionEvent event)* method. Enable some configuration with custom rules.
 
-**Rule** let you enable/disable:
- - if **RuledScrollView** should retake touch event, when an currently touch handled children can't scroll anymore
+**Rule** let you manage all children views without extend any other classes.
 
 
 ##Benefits##
@@ -48,13 +46,26 @@ Or one step further with dynamic layouts
    </LinearLayout>
 </RuledScrollView>`
 
+![alt tag](http://s14.directupload.net/images/141108/vw53apcc.png)
+
 ##Problems##
 You will get some performance problems if you have done a really fancy view tree with a lot of **ViewGroups** and scrollable **Views**.
 
 ##Todo##
  - create sample with an fragment pager
- - add more rules
  - wait for feedback :)
 
 ##License##
-This projected is licensed under the terms of the Apache License 2.0 license.
+`Copyright 2014 Mario Kreußel
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.`
