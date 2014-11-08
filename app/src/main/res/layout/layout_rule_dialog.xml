@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp">
+
+    <TextView
+        android:id="@+id/label_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        android:text="left:"/>
+
+    <RadioGroup
+        android:id="@+id/radio_group_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/label_left"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radio_never"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="never"
+            android:textSize="10sp"/>
+
+        <RadioButton
+            android:id="@+id/radio_always"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="always"
+            android:textSize="10sp"/>
+
+        <RadioButton
+            android:id="@+id/radio_scroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="scroll"
+            android:textSize="10sp"/>
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/label_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/radio_group_left"
+        android:textSize="10sp"
+        android:text="up:"/>
+
+    <RadioGroup
+        android:id="@+id/radio_group_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/radio_group_left"
+        android:layout_toRightOf="@id/label_up"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@id/radio_never"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="never"
+            android:textSize="10sp"/>
+
+        <RadioButton
+            android:id="@id/radio_always"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="always"
+            android:textSize="10sp"/>
+
+        <RadioButton
+            android:id="@id/radio_scroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="scroll"
+            android:textSize="10sp"/>
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/label_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/radio_group_top"
+        android:textSize="10sp"
+        android:text="right:"/>
+
+    <RadioGroup
+        android:id="@+id/radio_group_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/radio_group_top"
+        android:layout_toRightOf="@id/label_right"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@id/radio_never"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="never"
+            android:textSize="10sp"/>
+
+        <RadioButton
+            android:id="@id/radio_always"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="always"
+            android:textSize="10sp"/>
+
+        <RadioButton
+            android:id="@id/radio_scroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="scroll"
+            android:textSize="10sp"/>
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/label_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/radio_group_right"
+        android:textSize="10sp"
+        android:text="bottom:"/>
+
+    <RadioGroup
+        android:id="@+id/radio_group_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/radio_group_right"
+        android:layout_toRightOf="@id/label_bottom"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@id/radio_never"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="never"
+            android:textSize="10sp"/>
+
+        <RadioButton
+            android:id="@id/radio_always"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="always"
+            android:textSize="10sp"/>
+
+        <RadioButton
+            android:id="@id/radio_scroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="scroll"
+            android:textSize="10sp"/>
+    </RadioGroup>
+
+</RelativeLayout>

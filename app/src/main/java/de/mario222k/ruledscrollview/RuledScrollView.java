@@ -6,6 +6,7 @@ package de.mario222k.ruledscrollview;
 
 import android.content.Context;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
@@ -50,8 +51,6 @@ public class RuledScrollView extends ScrollView {
      * stored pointer id to support "finger walk scrolling"
      */
     private int mActivePointerId = 0;
-
-    private Rule mRule = new Rule();;
     //endregion
 
     //region constructors
@@ -74,43 +73,31 @@ public class RuledScrollView extends ScrollView {
     /**
      * dispatchTouchEvent will cause an faked {@code ACTION_DOWN} event
      * if this view has:
-     * - {@link Rule}.overtakeTouchAgain is {@code true}
      * - not intercepted move event
      * - not handled down event
      * - can scroll in dispatched direction
-     * - no other child can scroll in dispatched direction
+     * - no other child can scroll in dispatched direction {@link de.mario222k.ruledscrollview.Rule}
      * <p/>
      * {@inheritDoc}
      */
     @Override
     public boolean dispatchTouchEvent ( @NonNull MotionEvent ev ) {
 
-        if (mRule.overtakeTouchAgain && ev.getActionMasked() == MotionEvent.ACTION_MOVE && mInterceptMode < 0 && !mHasConsumedDown) {
+        if (ev.getActionMasked() == MotionEvent.ACTION_MOVE && mInterceptMode < 0 && !mHasConsumedDown) {
             updateTouchDirection(ev);
-            if (mTouchAxis > 0) {
-                // intercept event only if scrollable
-                if (canScrollVertically(mTouchDirection) && !oneChildCanScroll(getChildAt(0))) {
-                    Log.w("TEST", "dispatch fake down event: " + ev.getX() + ", " + ev.getY());
-                    MotionEvent fakeEvent = MotionEvent.obtain(ev);
-                    fakeEvent.setAction(MotionEvent.ACTION_DOWN);
-                    return super.dispatchTouchEvent(fakeEvent);
-                }
-
-            } else {
-                // intercept event only if scrollable
-                if (canScrollHorizontally(mTouchDirection) && !oneChildCanScroll(getChildAt(0))) {
-                    Log.w("TEST", "dispatch fake down event: " + ev.getX() + ", " + ev.getY());
-                    MotionEvent fakeEvent = MotionEvent.obtain(ev);
-                    fakeEvent.setAction(MotionEvent.ACTION_DOWN);
-                    return super.dispatchTouchEvent(fakeEvent);
-                }
+            // intercept event only if scrollable
+            if (getInterceptionMode(ev) > 0) {
+                Log.w("TEST", "dispatch fake down event: " + ev.getX() + ", " + ev.getY());
+                MotionEvent fakeEvent = MotionEvent.obtain(ev);
+                fakeEvent.setAction(MotionEvent.ACTION_DOWN);
+                return super.dispatchTouchEvent(fakeEvent);
             }
         }
         return super.dispatchTouchEvent(ev);
     }
 
     /**
-     * intercept touch when no view (children), except this can scroll
+     * intercept touch move when no view (children) is allowed to scroll {@link de.mario222k.ruledscrollview.Rule}
      * <p/>
      * {@inheritDoc}
      */
@@ -140,20 +127,11 @@ public class RuledScrollView extends ScrollView {
                 }
                 if (mDownPoint != null) {
                     updateTouchDirection(ev);
-                    if (mTouchAxis > 0) {
-                        if (Math.abs(mTouchDirection) > mTouchSlop) {
-                            // intercept event only if scrollable
-                            mInterceptMode = (canScrollVertically(mTouchDirection) && !oneChildCanScroll(getChildAt(0))) ? 1 : -1;
-                            Log.d("TEST", "intercept move event: " + mInterceptMode + "(" + ev.getX() + ", " + ev.getY() + ")");
-                            return mInterceptMode > 0;
-                        }
-                    } else {
-                        if (Math.abs(mTouchDirection) > mTouchSlop) {
-                            // intercept event only if scrollable
-                            mInterceptMode = (canScrollHorizontally(mTouchDirection) && !oneChildCanScroll(getChildAt(0))) ? 1 : -1;
-                            Log.d("TEST", "intercept move event: " + mInterceptMode + "(" + ev.getX() + ", " + ev.getY() + ")");
-                            return mInterceptMode > 0;
-                        }
+                    if (Math.abs(mTouchDirection) > mTouchSlop) {
+                        // intercept event only if scrollable
+                        mInterceptMode = getInterceptionMode(ev);
+                        Log.d("TEST", "intercept move event: " + mInterceptMode + "(" + ev.getX() + ", " + ev.getY() + ")");
+                        return mInterceptMode > 0;
                     }
                 }
                 break;
@@ -176,7 +154,54 @@ public class RuledScrollView extends ScrollView {
     }
 
     /**
-     * overridden to remember if touch down event was originally handled by this view
+     * helper method to determine if event should be intercepted
+     * @param ev current event
+     * @return {@code -1} for no interception and {@code +1} for intercept
+     */
+    private int getInterceptionMode (MotionEvent ev) {
+        int ruleDirection;
+
+        if(mTouchAxis > 0) {
+            boolean canSelfScroll = Rule.canViewScrollVertical(this, mTouchDirection);
+            ruleDirection = (mTouchDirection > 0) ? Rule.RULE_DIRECTION_DOWN : Rule.RULE_DIRECTION_UP;
+            if(canSelfScroll && Rule.handleDirectionForViewAlways(this, ruleDirection)) {
+                return 1;
+            } else if (oneChildCanScroll(getChildAt(0), (int) ev.getRawX(), (int) ev.getRawY())) {
+                return -1;
+            } else {
+                return 1;
+            }
+        } else {
+            boolean canSelfScroll = Rule.canViewScrollHorizontal(this, mTouchDirection);
+            ruleDirection = (mTouchDirection > 0) ? Rule.RULE_DIRECTION_RIGHT : Rule.RULE_DIRECTION_LEFT;
+            if(canSelfScroll && Rule.handleDirectionForViewAlways(this, ruleDirection)) {
+                return 1;
+            } else if (oneChildCanScroll(getChildAt(0), (int) ev.getRawX(), (int) ev.getRawY())) {
+                return -1;
+            } else {
+                return 1;
+            }
+
+        }
+    }
+
+    Rect outRect = new Rect();
+
+    /**
+     * helper method to determine if event coordinates are in boundary of an view
+     * @param view that can handle event and should be checked
+     * @param x event raw x coordinate
+     * @param y event raw y coordinate
+     * @return {@code true} if view bounds match coordinates
+     */
+    private boolean isInViewBounds ( View view, int x, int y ){
+        view.getGlobalVisibleRect(outRect);
+        return outRect.contains(x, y);
+    }
+
+    /**
+     * overridden to remember if touch down event was originally handled by this view and
+     * to ignore touch move if rule is set {@link de.mario222k.ruledscrollview.Rule}
      * <p/>
      * {@inheritDoc}
      */
@@ -188,6 +213,26 @@ public class RuledScrollView extends ScrollView {
                 Log.d("TEST", "touch event consumedDown: " + mHasConsumedDown);
                 return mHasConsumedDown;
 
+            case MotionEvent.ACTION_MOVE:
+                if(mHasConsumedDown) {
+                    updateTouchDirection(ev);
+                    boolean canScroll;
+                    if (mTouchAxis > 0) {
+                        if (Math.abs(mTouchDirection) > mTouchSlop) {
+                            canScroll = Rule.canViewScrollVertical(this, mTouchDirection);
+                            Log.d("TEST", "touch event move vertical: " + canScroll);
+                            return canScroll && super.onTouchEvent(ev);
+                        }
+                    } else {
+                        if (Math.abs(mTouchDirection) > mTouchSlop) {
+                            canScroll = Rule.canViewScrollHorizontal(this, mTouchDirection);
+                            Log.d("TEST", "touch event move horizontal: " + canScroll);
+                            return canScroll && super.onTouchEvent(ev);
+                        }
+                    }
+                }
+                break;
+
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 mHasConsumedDown = false;
@@ -195,18 +240,6 @@ public class RuledScrollView extends ScrollView {
                 Log.d("TEST", "touch event consumedDown: " + mHasConsumedDown);
         }
         return super.onTouchEvent(ev);
-    }
-    //endregion
-
-    //region public methods
-    public void setRule (Rule rule) {
-        if(rule == null) {
-            rule = new Rule();
-        }
-        mRule = rule;
-    }
-    public Rule getRule() {
-        return mRule;
     }
     //endregion
 
@@ -251,43 +284,45 @@ public class RuledScrollView extends ScrollView {
     }
 
     /**
-     * recursive method to determine if an child view can scroll
+     * recursive method to determine if an child view can scroll and event coordinates are withing its view boundaries
      *
      * @param v view and its children that will be checked
+     * @param rawX event raw x coordinate
+     * @param rawY event raw y coordinate
      * @return true if child or one of its children can scroll
      */
-    protected boolean oneChildCanScroll ( View v ) {
+    protected boolean oneChildCanScroll ( View v, int rawX, int rawY ) {
         if (v == null) {
             // invalid argument
             return false;
 
-        } else if (mTouchAxis > 0 && !v.canScrollVertically(mTouchDirection)) {
+        } else if (mTouchAxis > 0 && !Rule.canViewScrollVertical(v, mTouchDirection)) {
             // check all view children
             if (v instanceof ViewGroup) {
                 ViewGroup vg = (ViewGroup) v;
                 for (int i = 0; i < vg.getChildCount(); i++) {
-                    if (vg.getChildAt(i).canScrollVertically(mTouchDirection)) {
+                    if (Rule.canViewScrollVertical(vg.getChildAt(i), mTouchDirection) && isInViewBounds(vg.getChildAt(i), rawX, rawY)) {
                         return true;
                     }
                 }
                 for (int i = 0; i < vg.getChildCount(); i++) {
-                    if (oneChildCanScroll(vg.getChildAt(i))) {
+                    if (oneChildCanScroll(vg.getChildAt(i), rawX, rawY)) {
                         return true;
                     }
                 }
             }
             return false;
-        } else if (mTouchAxis < 0 && !v.canScrollHorizontally(mTouchDirection)) {
+        } else if (mTouchAxis < 0 && !Rule.canViewScrollHorizontal(v, mTouchDirection)) {
             // check all view children
             if (v instanceof ViewGroup) {
                 ViewGroup vg = (ViewGroup) v;
                 for (int i = 0; i < vg.getChildCount(); i++) {
-                    if (vg.getChildAt(i).canScrollHorizontally(mTouchDirection)) {
+                    if (Rule.canViewScrollHorizontal(vg.getChildAt(i), mTouchDirection) && isInViewBounds(vg.getChildAt(i), rawX, rawY)) {
                         return true;
                     }
                 }
                 for (int i = 0; i < vg.getChildCount(); i++) {
-                    if (oneChildCanScroll(vg.getChildAt(i))) {
+                    if (oneChildCanScroll(vg.getChildAt(i), rawX, rawY)) {
                         return true;
                     }
                 }
@@ -295,8 +330,14 @@ public class RuledScrollView extends ScrollView {
             return false;
         } else {
             // view can scroll
-            return true;
+            return isInViewBounds(v, rawX, rawY);
         }
     }
+
+//    private boolean viewHitsDownPoint (View view) {
+//        if(view != null && mDownPoint != null) {
+//
+//        }
+//    }
     //endregion
 }
