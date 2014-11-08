@@ -21,20 +21,21 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="100dp"
                 android:background="#FF00FF00" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="100dp"
                 android:background="#FFFF0000" />
 
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
-                android:layout_margin="10dp">
+                android:layout_margin="10dp" >
 
                 <LinearLayout
+                    android:id="@+id/inner_scroll_view_child"
                     android:layout_width="match_parent"
                     android:layout_height="800dp"
                     android:orientation="vertical">
@@ -65,12 +66,12 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="100dp"
                 android:background="#FF0000FF" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="100dp"
                 android:background="#FF00F0F0" />
 
         </LinearLayout>
