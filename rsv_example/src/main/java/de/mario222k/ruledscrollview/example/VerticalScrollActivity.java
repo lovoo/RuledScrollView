@@ -1,4 +1,4 @@
-package de.mario222k.ruledscrollview;
+package de.mario222k.ruledscrollview.example;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,9 +9,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.RadioGroup;
 
+import de.mario222k.ruledscrollview.lib.Rule;
+import de.mario222k.ruledscrollview.lib.RuledScrollView;
 
 public class VerticalScrollActivity extends Activity {
 

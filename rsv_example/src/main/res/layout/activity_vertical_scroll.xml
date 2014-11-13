@@ -8,7 +8,7 @@
                 android:paddingTop="@dimen/activity_vertical_margin"
                 tools:context=".ExampleActivity">
 
-    <de.mario222k.ruledscrollview.RuledScrollView
+    <de.mario222k.ruledscrollview.lib.RuledScrollView
         android:id="@+id/ruled_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -76,6 +76,6 @@
 
         </LinearLayout>
 
-    </de.mario222k.ruledscrollview.RuledScrollView>
+    </de.mario222k.ruledscrollview.lib.RuledScrollView>
 
 </RelativeLayout>

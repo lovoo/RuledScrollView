@@ -1,4 +1,4 @@
-package de.mario222k.ruledscrollview;
+package de.mario222k.ruledscrollview.lib;
 
 import android.view.View;
 
@@ -25,18 +25,18 @@ public class Rule {
     public final static int RULE_DIRECTION_DOWN = 3;
 
     /**
-     * if set to an child of {@link de.mario222k.ruledscrollview.RuledScrollView}: child will never get an touch move event
-     * if set to {@link de.mario222k.ruledscrollview.RuledScrollView}: normal intercept handling
+     * if set to an child of {@link RuledScrollView}: child will never get an touch move event
+     * if set to {@link RuledScrollView}: normal intercept handling
      */
     public final static int RULE_HANDLE_NEVER = 0x0000;
     /**
-     * if set to an child of {@link de.mario222k.ruledscrollview.RuledScrollView}: child will keep touch event even if border reached
-     * if set to {@link de.mario222k.ruledscrollview.RuledScrollView}: children will never get an touch move event
+     * if set to an child of {@link RuledScrollView}: child will keep touch event even if border reached
+     * if set to {@link RuledScrollView}: children will never get an touch move event
      */
     public final static int RULE_HANDLE_ALWAYS = 0x0001;
     /**
-     * if set to an child of {@link de.mario222k.ruledscrollview.RuledScrollView}: child will delegate touch event if its border is reached
-     * if set to {@link de.mario222k.ruledscrollview.RuledScrollView}: normal intercept handling
+     * if set to an child of {@link RuledScrollView}: child will delegate touch event if its border is reached
+     * if set to {@link RuledScrollView}: normal intercept handling
      */
     public final static int RULE_HANDLE_IF_SCROLLABLE = 0x0002;
 

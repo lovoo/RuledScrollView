@@ -1,4 +1,4 @@
-package de.mario222k.ruledscrollview;
+package de.mario222k.ruledscrollview.lib;
 
 /**
  * Created by mariokreussel on 29.10.14.
@@ -76,7 +76,7 @@ public class RuledScrollView extends ScrollView {
      * - not intercepted move event
      * - not handled down event
      * - can scroll in dispatched direction
-     * - no other child can scroll in dispatched direction {@link de.mario222k.ruledscrollview.Rule}
+     * - no other child can scroll in dispatched direction {@link Rule}
      * <p/>
      * {@inheritDoc}
      */
@@ -97,7 +97,7 @@ public class RuledScrollView extends ScrollView {
     }
 
     /**
-     * intercept touch move when no view (children) is allowed to scroll {@link de.mario222k.ruledscrollview.Rule}
+     * intercept touch move when no view (children) is allowed to scroll {@link Rule}
      * <p/>
      * {@inheritDoc}
      */
@@ -201,7 +201,7 @@ public class RuledScrollView extends ScrollView {
 
     /**
      * overridden to remember if touch down event was originally handled by this view and
-     * to ignore touch move if rule is set {@link de.mario222k.ruledscrollview.Rule}
+     * to ignore touch move if rule is set {@link Rule}
      * <p/>
      * {@inheritDoc}
      */
