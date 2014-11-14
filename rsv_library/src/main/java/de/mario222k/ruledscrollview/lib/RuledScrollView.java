@@ -87,13 +87,27 @@ public class RuledScrollView extends ScrollView {
             updateTouchDirection(ev);
             // intercept event only if scrollable
             if (getInterceptionMode(ev) > 0) {
-                Log.w("TEST", "dispatch fake down event: " + ev.getX() + ", " + ev.getY());
-                MotionEvent fakeEvent = MotionEvent.obtain(ev);
-                fakeEvent.setAction(MotionEvent.ACTION_DOWN);
-                return super.dispatchTouchEvent(fakeEvent);
+                return super.dispatchTouchEvent(getFakeDownEvent(ev));
             }
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    /**
+     * create an fake down event with an touch offset equals to touch slop
+     * to make touch handling seem less
+     * @param ev
+     * @return faked down event
+     */
+    private MotionEvent getFakeDownEvent( @NonNull MotionEvent ev ) {
+        MotionEvent fakeEvent = MotionEvent.obtain(ev);
+        fakeEvent.setAction(MotionEvent.ACTION_DOWN);
+        int offset = (mTouchDirection > 0) ? mTouchSlop : -mTouchSlop;
+        int offsetX = (mTouchAxis < 0) ? offset : 0;
+        int offsetY = (mTouchAxis > 0) ? offset : 0;
+        fakeEvent.offsetLocation(offsetX, offsetY);
+        Log.w("TEST", "dispatch fake down event: " + ev.getX() + " ("+offsetX+"), " + ev.getY() + " ("+offsetY+")");
+        return fakeEvent;
     }
 
     /**
@@ -164,7 +178,7 @@ public class RuledScrollView extends ScrollView {
         if(mTouchAxis > 0) {
             boolean canSelfScroll = Rule.canViewScrollVertical(this, mTouchDirection);
             ruleDirection = (mTouchDirection > 0) ? Rule.RULE_DIRECTION_DOWN : Rule.RULE_DIRECTION_UP;
-            if(canSelfScroll && Rule.handleDirectionForViewAlways(this, ruleDirection)) {
+            if(canSelfScroll && Rule.ignoreChildrenForDirection(this, ruleDirection)) {
                 return 1;
             } else if (oneChildCanScroll(getChildAt(0), (int) ev.getRawX(), (int) ev.getRawY())) {
                 return -1;
@@ -174,7 +188,7 @@ public class RuledScrollView extends ScrollView {
         } else {
             boolean canSelfScroll = Rule.canViewScrollHorizontal(this, mTouchDirection);
             ruleDirection = (mTouchDirection > 0) ? Rule.RULE_DIRECTION_RIGHT : Rule.RULE_DIRECTION_LEFT;
-            if(canSelfScroll && Rule.handleDirectionForViewAlways(this, ruleDirection)) {
+            if(canSelfScroll && Rule.ignoreChildrenForDirection(this, ruleDirection)) {
                 return 1;
             } else if (oneChildCanScroll(getChildAt(0), (int) ev.getRawX(), (int) ev.getRawY())) {
                 return -1;
@@ -210,34 +224,40 @@ public class RuledScrollView extends ScrollView {
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 mHasConsumedDown = super.onTouchEvent(ev);
-                Log.d("TEST", "touch event consumedDown: " + mHasConsumedDown);
+                Log.d("TEST", "touch event begin consumedDown: " + mHasConsumedDown);
                 return mHasConsumedDown;
 
             case MotionEvent.ACTION_MOVE:
-                if(mHasConsumedDown) {
+//                if(mHasConsumedDown) {
                     updateTouchDirection(ev);
                     boolean canScroll;
                     if (mTouchAxis > 0) {
                         if (Math.abs(mTouchDirection) > mTouchSlop) {
                             canScroll = Rule.canViewScrollVertical(this, mTouchDirection);
                             Log.d("TEST", "touch event move vertical: " + canScroll);
+                            if(!canScroll) {
+                                dispatchTouchEvent(getFakeDownEvent(ev));
+                            }
                             return canScroll && super.onTouchEvent(ev);
                         }
                     } else {
                         if (Math.abs(mTouchDirection) > mTouchSlop) {
                             canScroll = Rule.canViewScrollHorizontal(this, mTouchDirection);
                             Log.d("TEST", "touch event move horizontal: " + canScroll);
+                            if(!canScroll) {
+                                dispatchTouchEvent(getFakeDownEvent(ev));
+                            }
                             return canScroll && super.onTouchEvent(ev);
                         }
                     }
-                }
+//                }
                 break;
 
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 mHasConsumedDown = false;
                 //noinspection ConstantConditions
-                Log.d("TEST", "touch event consumedDown: " + mHasConsumedDown);
+                Log.d("TEST", "touch event finish consumedDown: " + mHasConsumedDown);
         }
         return super.onTouchEvent(ev);
     }
