@@ -39,9 +39,14 @@ public class Rule {
      * if set to {@link RuledScrollView}: normal intercept handling
      */
     public final static int RULE_HANDLE_IF_SCROLLABLE = 0x0002;
+    /**
+     * if set to an child of {@link RuledScrollView}: child will delegate touch event if its border is reached
+     * if set to {@link RuledScrollView}: normal intercept handling
+     */
+    public final static int RULE_HANDLE_IGNORE_CHILDREN = 0x0004;
 
-    private final static int RULE_CONFIG_SHIFT  = 2;
-    private final static int RULE_CONFIG_MASK   = 0x0003;
+    private final static int RULE_CONFIG_SHIFT  = 3;
+    private final static int RULE_CONFIG_MASK   = 0x0007;
 
     /**
      * method to setup a view with a rule
@@ -73,11 +78,12 @@ public class Rule {
     /**
      * @param view target view that rule will be checked
      * @param direction currently used move direction
-     * @return {@code true} if current role is {@code RULE_HANDLE_ALWAYS}, {@code false} otherwise
+     * @return {@code true} if current role is {@code RULE_HANDLE_ALWAYS} || {@code RULE_HANDLE_IGNORE_CHILDREN} , {@code false} otherwise
      */
-    public static boolean handleDirectionForViewAlways(View view, int direction) {
+    public static boolean ignoreChildrenForDirection ( View view, int direction ) {
         Rule rule = getRuleFromView(view);
-        return rule.getRuleForDirection(direction) == RULE_HANDLE_ALWAYS;
+        return (rule.getRuleForDirection(direction) & RULE_HANDLE_ALWAYS) > 0 ||
+                (rule.getRuleForDirection(direction) & RULE_HANDLE_IGNORE_CHILDREN) > 0;
     }
 
     /**
@@ -96,14 +102,13 @@ public class Rule {
         }
 
         int mode = rule.getRuleForDirection(direction);
-        switch(mode) {
-            case RULE_HANDLE_ALWAYS:
-                return true;
-            case RULE_HANDLE_NEVER:
-                return false;
-            case RULE_HANDLE_IF_SCROLLABLE:
-            default:
-                return view.canScrollHorizontally(leftRight);
+        if((mode & RULE_HANDLE_ALWAYS) > 0) {
+            return true;
+        } else if((mode & RULE_HANDLE_ALWAYS) == 0) {
+            // RULE_HANDLE_NEVER active
+            return false;
+        } else {
+            return view.canScrollHorizontally(leftRight);
         }
     }
 
