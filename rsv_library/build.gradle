@@ -1,15 +1,11 @@
 apply plugin: 'com.android.library'
+apply from: "${rootDir}/android_common.gradle"
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.1"
-
     defaultConfig {
-        applicationId "de.mario222k.ruledscrollview.lib"
-        minSdkVersion 14
-        targetSdkVersion 21
         versionCode 1
-        versionName "1.0"    }
+        versionName "1.0"
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -20,5 +16,4 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:21.0.0'
 }
