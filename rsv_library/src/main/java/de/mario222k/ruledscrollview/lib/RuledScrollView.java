@@ -124,7 +124,7 @@ public class RuledScrollView extends ScrollView {
                 mInterceptMode = 0;
                 mDownPoint = new PointF(ev.getX(), ev.getY());
                 mActivePointerId = MotionEventCompat.getPointerId(ev, 0);
-                Log.i("TEST", "intercept down even: " + ev.getX() + ", " + ev.getY());
+//                Log.i("TEST", "intercept down even: " + ev.getX() + ", " + ev.getY());
                 break;
 
             case MotionEvent.ACTION_MOVE:
@@ -144,7 +144,7 @@ public class RuledScrollView extends ScrollView {
                     if (Math.abs(mTouchDirection) > mTouchSlop) {
                         // intercept event only if scrollable
                         mInterceptMode = getInterceptionMode(ev);
-                        Log.d("TEST", "intercept move event: " + mInterceptMode + "(" + ev.getX() + ", " + ev.getY() + ")");
+//                        Log.d("TEST", "intercept move event: " + mInterceptMode + "(" + ev.getX() + ", " + ev.getY() + ")");
                         return mInterceptMode > 0;
                     }
                 }
@@ -161,7 +161,7 @@ public class RuledScrollView extends ScrollView {
                 mInterceptMode = 0;
                 mActivePointerId = -1;
                 mDownPoint = null;
-                Log.e("TEST", "cancel");
+//                Log.e("TEST", "cancel");
                 break;
         }
         return super.onInterceptTouchEvent(ev);
@@ -234,7 +234,7 @@ public class RuledScrollView extends ScrollView {
                     if (mTouchAxis > 0) {
                         if (Math.abs(mTouchDirection) > mTouchSlop) {
                             canScroll = Rule.canViewScrollVertical(this, mTouchDirection);
-                            Log.d("TEST", "touch event move vertical: " + canScroll);
+//                            Log.d("TEST", "touch event move vertical: " + canScroll);
                             if(!canScroll) {
                                 dispatchTouchEvent(getFakeDownEvent(ev));
                             }
@@ -243,7 +243,7 @@ public class RuledScrollView extends ScrollView {
                     } else {
                         if (Math.abs(mTouchDirection) > mTouchSlop) {
                             canScroll = Rule.canViewScrollHorizontal(this, mTouchDirection);
-                            Log.d("TEST", "touch event move horizontal: " + canScroll);
+//                            Log.d("TEST", "touch event move horizontal: " + canScroll);
                             if(!canScroll) {
                                 dispatchTouchEvent(getFakeDownEvent(ev));
                             }
@@ -257,7 +257,7 @@ public class RuledScrollView extends ScrollView {
             case MotionEvent.ACTION_UP:
                 mHasConsumedDown = false;
                 //noinspection ConstantConditions
-                Log.d("TEST", "touch event finish consumedDown: " + mHasConsumedDown);
+//                Log.d("TEST", "touch event finish consumedDown: " + mHasConsumedDown);
         }
         return super.onTouchEvent(ev);
     }
@@ -275,10 +275,10 @@ public class RuledScrollView extends ScrollView {
                 int dY = (int) (mDownPoint.y - y); // inverted delta (old - new value)
                 mTouchAxis = Math.abs(dY) - Math.abs(dX);
                 if (mTouchAxis > 0) {
-                    Log.v("TEST", "direction: " + mTouchDirection + " --> " + dY);
+//                    Log.v("TEST", "direction: " + mTouchDirection + " --> " + dY);
                     mTouchDirection = dY;
                 } else {
-                    Log.v("TEST", "direction: " + mTouchDirection + " --> " + dX);
+//                    Log.v("TEST", "direction: " + mTouchDirection + " --> " + dX);
                     mTouchDirection = dX;
                 }
             }
