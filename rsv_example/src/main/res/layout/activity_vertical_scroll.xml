@@ -1,33 +1,24 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                tools:context=".ExampleActivity">
+                android:layout_height="match_parent" >
 
     <de.mario222k.ruledscrollview.lib.RuledScrollView
         android:id="@+id/ruled_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FF000000">
+        android:background="#80000000">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <View
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:background="#FF00FF00" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:background="#FFFF0000" />
+                android:layout_height="200dp"
+                android:padding="20dp"
+                android:text="long click to config outer ScrollView"
+                android:background="#4CB581" />
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -40,9 +31,11 @@
                     android:layout_height="800dp"
                     android:orientation="vertical">
 
-                    <View
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
+                        android:padding="20dp"
+                        android:text="long click to config inner ScrollView"
                         android:background="#FFDDDD00" />
 
                     <View
@@ -66,13 +59,8 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:background="#FF0000FF" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:background="#FF00F0F0" />
+                android:layout_height="200dp"
+                android:background="#4CB581" />
 
         </LinearLayout>
 
