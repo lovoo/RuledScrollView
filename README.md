@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/mario222k/RuledScrollView.png?branch=master)](https://travis-ci.org/mario222k/RuledScrollView)
 RuledScrollView
 ===============
 
@@ -25,35 +26,12 @@ Create a custom **ScrollView** with an full implemented *onInterceptTouchEvent(M
 
 ##Benefits##
 
-One full implemented **RuledScrollView** can be used to enable scrolling in complex layouts like:
-
-`<RuledScrollView>
-   <LinearLayout>
-       <HEADERVIEW />
-       <ScrollView>
-         <CONTENTVIEW />
-       </ScrollView>
-       <FOOTERVIEW />
-   </LinearLayout>
-</RuledScrollView>`
-
-Or one step further with dynamic layouts
-
-`<RuledScrollView>
-   <LinearLayout>
-       <fragmentA />
-       <fragmentB />
-   </LinearLayout>
-</RuledScrollView>`
+Change scroll behaviour of nested scrollable views in real time via code.
 
 ![alt tag](http://s14.directupload.net/images/141108/vw53apcc.png)
 
 ##Problems##
 You will get some performance problems if you have done a really fancy view tree with a lot of **ViewGroups** and scrollable **Views**.
-
-##Todo##
- - create sample with an fragment pager
- - wait for feedback :)
 
 ##License##
 `Copyright 2014 Mario Kreußel
