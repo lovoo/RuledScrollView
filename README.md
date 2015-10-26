@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/mario222k/RuledScrollView.png?branch=master)](https://travis-ci.org/mario222k/RuledScrollView)
+[![Build Status](https://travis-ci.org/mario222k/RuledScrollView.svg?branch=master)](https://travis-ci.org/mario222k/RuledScrollView)
 RuledScrollView
 ===============
 
