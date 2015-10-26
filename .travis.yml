@@ -1,9 +1,11 @@
 language: android
 
+sudo: false
+
 branches:
   only: master
 
-script: ./gradlew :rsv_example:assembleRelease
+script: gradle :rsv_example:assembleRelease
 
 android:
   components:
