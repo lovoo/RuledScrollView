@@ -67,16 +67,16 @@ public class VerticalScrollActivity extends Activity {
 
             Rule activeRule = Rule.getRuleFromView(target);
             final RadioGroup radioLeft = (RadioGroup) layout.findViewById(R.id.radio_group_left);
-            radioLeft.check(getIdFromRule(activeRule.getRuleForDirection(Rule.RULE_DIRECTION_LEFT)));
+            radioLeft.check(getIdFromRule(activeRule.getRuleForDirection(Rule.DIRECTION.LEFT)));
 
             final RadioGroup radioTop = (RadioGroup) layout.findViewById(R.id.radio_group_top);
-            radioTop.check(getIdFromRule(activeRule.getRuleForDirection(Rule.RULE_DIRECTION_UP)));
+            radioTop.check(getIdFromRule(activeRule.getRuleForDirection(Rule.DIRECTION.UP)));
 
             final RadioGroup radioRight = (RadioGroup) layout.findViewById(R.id.radio_group_right);
-            radioRight.check(getIdFromRule(activeRule.getRuleForDirection(Rule.RULE_DIRECTION_RIGHT)));
+            radioRight.check(getIdFromRule(activeRule.getRuleForDirection(Rule.DIRECTION.RIGHT)));
 
             final RadioGroup radioBottom = (RadioGroup) layout.findViewById(R.id.radio_group_bottom);
-            radioBottom.check(getIdFromRule(activeRule.getRuleForDirection(Rule.RULE_DIRECTION_DOWN)));
+            radioBottom.check(getIdFromRule(activeRule.getRuleForDirection(Rule.DIRECTION.DOWN)));
 
             final AlertDialog.Builder b = new AlertDialog.Builder(this);
             b.setTitle("set Rule for: " + target.getClass().getSimpleName());

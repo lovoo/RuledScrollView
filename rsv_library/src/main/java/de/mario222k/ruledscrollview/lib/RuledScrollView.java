@@ -206,11 +206,11 @@ public class RuledScrollView extends ScrollView {
      * @return {@code -1} for no interception and {@code +1} for intercept
      */
     private int getInterceptionMode ( MotionEvent ev ) {
-        int ruleDirection;
+        Rule.DIRECTION ruleDirection;
 
         if (mTouchAxis > 0) {
             boolean canSelfScroll = Rule.canViewScrollVertical(this, mTouchDirection);
-            ruleDirection = (mTouchDirection > 0) ? Rule.RULE_DIRECTION_DOWN : Rule.RULE_DIRECTION_UP;
+            ruleDirection = (mTouchDirection > 0) ? Rule.DIRECTION.DOWN : Rule.DIRECTION.UP;
             if (canSelfScroll && Rule.ignoreChildrenForDirection(this, ruleDirection)) {
                 return 1;
             } else if (oneChildCanScroll(this, (int) ev.getRawX(), (int) ev.getRawY())) {
@@ -220,7 +220,7 @@ public class RuledScrollView extends ScrollView {
             }
         } else {
             boolean canSelfScroll = Rule.canViewScrollHorizontal(this, mTouchDirection);
-            ruleDirection = (mTouchDirection > 0) ? Rule.RULE_DIRECTION_RIGHT : Rule.RULE_DIRECTION_LEFT;
+            ruleDirection = (mTouchDirection > 0) ? Rule.DIRECTION.RIGHT : Rule.DIRECTION.LEFT;
             if (canSelfScroll && Rule.ignoreChildrenForDirection(this, ruleDirection)) {
                 return 1;
             } else if (oneChildCanScroll(this, (int) ev.getRawX(), (int) ev.getRawY())) {

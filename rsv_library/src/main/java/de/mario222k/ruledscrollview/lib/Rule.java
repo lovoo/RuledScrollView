@@ -1,5 +1,7 @@
 package de.mario222k.ruledscrollview.lib;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 
 /**
@@ -9,21 +11,11 @@ import android.view.View;
 public class Rule {
 
     /**
-     * Touch direction left.
+     * Touch directions for rules.
      */
-    public static final int RULE_DIRECTION_LEFT = 0;
-    /**
-     * Touch direction up.
-     */
-    public static final int RULE_DIRECTION_UP = 1;
-    /**
-     * Touch direction right.
-     */
-    public static final int RULE_DIRECTION_RIGHT = 2;
-    /**
-     * Touch direction down.
-     */
-    public static final int RULE_DIRECTION_DOWN = 3;
+    public enum DIRECTION {
+        LEFT, UP, RIGHT, DOWN
+    }
 
     /**
      * If set to an child of {@link RuledScrollView}: child will never get an touch move event.
@@ -48,6 +40,8 @@ public class Rule {
 
     private static final int RULE_CONFIG_SHIFT = 3;
     private static final int RULE_CONFIG_MASK = 0x0007;
+
+    private int[] mDirectionFlags;
 
     /**
      * Method to setup a view with a rule.
@@ -85,7 +79,7 @@ public class Rule {
      * @param direction currently used move direction
      * @return {@code true} if current rule is {@code RULE_HANDLE_ALWAYS} || {@code RULE_HANDLE_IGNORE_CHILDREN}, {@code false} otherwise
      */
-    public static boolean ignoreChildrenForDirection ( View view, int direction ) {
+    public static boolean ignoreChildrenForDirection ( View view, DIRECTION direction ) {
         Rule rule = getRuleFromView(view);
         return (rule.getRuleForDirection(direction) & RULE_HANDLE_ALWAYS) > 0
                 || (rule.getRuleForDirection(direction) & RULE_HANDLE_IGNORE_CHILDREN) > 0;
@@ -94,19 +88,19 @@ public class Rule {
     /**
      * Check if this {@link View} can scroll left or right.
      *
-     * @param view      target view that will be checked
-     * @param leftRight currently used move direction
+     * @param view                target view that will be checked
+     * @param leftRightDifference currently used move direction (startPoint.X - currentPosition.X)
      * @return {@code true} if current rule allows scroll in this direction, {@code false} otherwise
      */
     @SuppressWarnings("SimplifiableIfStatement")
-    public static boolean canViewScrollHorizontal ( View view, int leftRight ) {
+    public static boolean canViewScrollHorizontal ( View view, int leftRightDifference ) {
         Rule rule = getRuleFromView(view);
 
-        int direction = -1;
-        if (leftRight < 0) {
-            direction = RULE_DIRECTION_LEFT;
-        } else if (leftRight > 0) {
-            direction = RULE_DIRECTION_RIGHT;
+        DIRECTION direction = null;
+        if (leftRightDifference < 0) {
+            direction = DIRECTION.LEFT;
+        } else if (leftRightDifference > 0) {
+            direction = DIRECTION.RIGHT;
         }
 
         int mode = rule.getRuleForDirection(direction);
@@ -117,24 +111,24 @@ public class Rule {
             return false;
         }
 
-        return view.canScrollHorizontally(leftRight);
+        return view.canScrollHorizontally(leftRightDifference);
     }
 
     /**
      * Check if this {@link View} can scroll up or down.
      *
-     * @param view   target view that will be checked
-     * @param upDown currently used move direction
+     * @param view             target view that will be checked
+     * @param upDownDifference currently used move direction (startPoint.Y - currentPosition.Y)
      * @return {@code true} if current rule allows scroll in this direction, {@code false} otherwise
      */
-    public static boolean canViewScrollVertical ( View view, int upDown ) {
+    public static boolean canViewScrollVertical ( View view, int upDownDifference ) {
         Rule rule = getRuleFromView(view);
 
-        int direction = -1;
-        if (upDown < 0) {
-            direction = RULE_DIRECTION_UP;
-        } else if (upDown > 0) {
-            direction = RULE_DIRECTION_DOWN;
+        DIRECTION direction = null;
+        if (upDownDifference < 0) {
+            direction = DIRECTION.UP;
+        } else if (upDownDifference > 0) {
+            direction = DIRECTION.DOWN;
         }
 
         int mode = rule.getRuleForDirection(direction);
@@ -145,11 +139,9 @@ public class Rule {
                 return false;
             case RULE_HANDLE_IF_SCROLLABLE:
             default:
-                return view.canScrollVertically(upDown);
+                return view.canScrollVertically(upDownDifference);
         }
     }
-
-    private int[] mDirectionFlags;
 
     /**
      * Default constructor.
@@ -178,10 +170,10 @@ public class Rule {
      */
     public Rule ( int left, int up, int right, int down ) {
         this();
-        mDirectionFlags[RULE_DIRECTION_LEFT] = left;
-        mDirectionFlags[RULE_DIRECTION_UP] = up;
-        mDirectionFlags[RULE_DIRECTION_RIGHT] = right;
-        mDirectionFlags[RULE_DIRECTION_DOWN] = down;
+        mDirectionFlags[DIRECTION.LEFT.ordinal()] = left;
+        mDirectionFlags[DIRECTION.UP.ordinal()] = up;
+        mDirectionFlags[DIRECTION.RIGHT.ordinal()] = right;
+        mDirectionFlags[DIRECTION.DOWN.ordinal()] = down;
     }
 
     /**
@@ -215,8 +207,8 @@ public class Rule {
      * @param ruleDirection direction that will be overwritten
      */
     @SuppressWarnings("unused")
-    public void setRule ( int ruleHandle, int ruleDirection ) {
-        mDirectionFlags[ruleDirection] = ruleHandle;
+    public void setRule ( int ruleHandle, @NonNull DIRECTION ruleDirection ) {
+        mDirectionFlags[ruleDirection.ordinal()] = ruleHandle;
     }
 
     /**
@@ -237,11 +229,16 @@ public class Rule {
      * @param direction requested direction
      * @return active rule for given direction or {@code RULE_HANDLE_NEVER}
      */
-    public int getRuleForDirection ( int direction ) {
-        if (direction >= 0 && direction < 4) {
-            return mDirectionFlags[direction];
+    public int getRuleForDirection ( @Nullable DIRECTION direction ) {
+        if (direction == null) {
+            return 0;
         }
-        return 0;
+        int ordinal = direction.ordinal();
+        if (ordinal < 0 || ordinal >= 4) {
+            return 0;
+        }
+
+        return mDirectionFlags[ordinal];
     }
 
     /**
