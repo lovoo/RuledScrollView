@@ -21,6 +21,8 @@ android:
     - android-23
 
     # Additional components
+    - platform-tools
+    - tools
     - extra-android-support
 
     # Specify at least one system image,
