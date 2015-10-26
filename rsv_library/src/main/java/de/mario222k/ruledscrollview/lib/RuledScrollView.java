@@ -1,7 +1,7 @@
 package de.mario222k.ruledscrollview.lib;
 
 /**
- *
+ * Custom ScrollView that handle {@link android.view.MotionEvent} for its children with a configured {@link de.mario222k.ruledscrollview.lib.Rule} .
  * Created by mariokreussel on 29.10.14.
  */
 
@@ -22,25 +22,30 @@ import java.util.ArrayList;
 
 public class RuledScrollView extends ScrollView {
 
+    // TODO change to gradle config
     private static final boolean LOG_ENABLED = false;
 
-    //region members
+    private static final String TAG = RuledScrollView.class.getSimpleName();
+
     /**
-     * member to store touch config information
+     * Member to store touch config information.
      */
     private int mTouchSlop;
     /**
-     * <0 : from up to down / from left to right
-     * >0 : from down to up / from right to left
+     * Hold information about current direction on a specified axis.
+     * <0 : from up to down or from left to right
+     * >0 : from down to up or from right to left
      */
     private int mTouchDirection = 0;
     /**
+     * Hold information which axis is effected most by current {@link MotionEvent}.
      * <0 : x-axis
      * >0 : y-axis
      */
     private int mTouchAxis = 0;
     private boolean mHasConsumedDown = false;
     /**
+     * Hold information if we intercepted this {@link MotionEvent}.
      * 0: unknown
      * +1: intercepted
      * -1: not intercepted
@@ -48,22 +53,21 @@ public class RuledScrollView extends ScrollView {
     private int mInterceptMode = 0;
 
     /**
-     * stored down event position
+     * Stored touch down event position.
      */
     private PointF mDownPoint = null;
 
     /**
-     * stored pointer id to support "finger walk scrolling"
+     * Stored pointer id to support "finger walk scrolling".
      */
     private int mActivePointerId = 0;
 
     /**
-     * determine if isVisible() should do a parent check as well
+     * Determine if isVisible() should do a parent check as well.
      */
     private boolean mDoVisibleParentCheck = false;
-    //endregion
 
-    //region constructors
+
     public RuledScrollView ( Context context ) {
         this(context, null);
     }
@@ -76,9 +80,6 @@ public class RuledScrollView extends ScrollView {
         super(context, attrs, defStyle);
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
-    //endregion
-
-    //region configuration
 
     /**
      * Configure how view visibility will be checked: only view or view and all its parents.
@@ -86,16 +87,13 @@ public class RuledScrollView extends ScrollView {
      *
      * @param enableVisibleParentCheck {@code true} if parents should be checked as well, {@code false} if only view visible state is needed
      */
+    @SuppressWarnings("unused")
     public void setParentVisibleCheckEnabled ( boolean enableVisibleParentCheck ) {
         mDoVisibleParentCheck = enableVisibleParentCheck;
     }
 
-    //endregion
-
-    //region touch handling
-
     /**
-     * dispatchTouchEvent will cause an faked {@code ACTION_DOWN} event
+     * DispatchTouchEvent will cause an faked {@code ACTION_DOWN} event.
      * if this view has:
      * - not intercepted move event
      * - not handled down event
@@ -118,8 +116,7 @@ public class RuledScrollView extends ScrollView {
     }
 
     /**
-     * create an fake down event with an touch offset equals to touch slop
-     * to make touch handling seem less
+     * Create an fake down event with an touch offset equals to touch slop to make touch handling seem less.
      *
      * @param ev current event
      * @return faked down event
@@ -132,13 +129,13 @@ public class RuledScrollView extends ScrollView {
         int offsetY = (mTouchAxis > 0) ? offset : 0;
         fakeEvent.offsetLocation(offsetX, offsetY);
         if (LOG_ENABLED) {
-            Log.w(RuledScrollView.class.getSimpleName(), "dispatch fake down event: " + ev.getX() + " (" + offsetX + "), " + ev.getY() + " (" + offsetY + ")");
+            Log.w(TAG, "dispatch fake down event: " + ev.getX() + " (" + offsetX + "), " + ev.getY() + " (" + offsetY + ")");
         }
         return fakeEvent;
     }
 
     /**
-     * intercept touch move when no view (children) is allowed to scroll {@link Rule}
+     * Intercept touch move when no view (children) is allowed to scroll {@link Rule}.
      * <p/>
      * {@inheritDoc}
      */
@@ -174,7 +171,7 @@ public class RuledScrollView extends ScrollView {
                         // intercept event only if scrollable
                         mInterceptMode = getInterceptionMode(ev);
                         if (LOG_ENABLED) {
-                            Log.d(RuledScrollView.class.getSimpleName(), "intercept move event: " + mInterceptMode + "(" + ev.getX() + ", " + ev.getY() + ")");
+                            Log.d(TAG, "intercept move event: " + mInterceptMode + "(" + ev.getX() + ", " + ev.getY() + ")");
                         }
                         return mInterceptMode > 0;
                     }
@@ -196,12 +193,14 @@ public class RuledScrollView extends ScrollView {
                     Log.e(RuledScrollView.class.getSimpleName(), "cancel");
                 }
                 break;
+            default:
+                break;
         }
         return super.onInterceptTouchEvent(ev);
     }
 
     /**
-     * helper method to determine if event should be intercepted
+     * Helper method to determine if event should be intercepted.
      *
      * @param ev current event
      * @return {@code -1} for no interception and {@code +1} for intercept
@@ -236,7 +235,7 @@ public class RuledScrollView extends ScrollView {
     Rect outRect = new Rect();
 
     /**
-     * helper method to determine if event coordinates are in boundary of an view
+     * Helper method to determine if event coordinates are in boundary of an view.
      *
      * @param view that can handle event and should be checked
      * @param x    event raw x coordinate
@@ -249,7 +248,7 @@ public class RuledScrollView extends ScrollView {
     }
 
     /**
-     * helper method to determine if view is visible
+     * Helper method to determine if view is visible.
      *
      * @param view that should be checked
      * @return {@code true} if view is visible
@@ -263,8 +262,7 @@ public class RuledScrollView extends ScrollView {
     }
 
     /**
-     * overridden to remember if touch down event was originally handled by this view and
-     * to ignore touch move if rule is set {@link Rule}
+     * Overridden to remember if touch down event was originally handled by this view and to ignore touch move if rule is set {@link Rule}.
      * <p/>
      * {@inheritDoc}
      */
@@ -313,14 +311,14 @@ public class RuledScrollView extends ScrollView {
                 mHasConsumedDown = false;
                 //noinspection ConstantConditions
                 if (LOG_ENABLED) {
-                    Log.d(RuledScrollView.class.getSimpleName(), "touch event finish consumedDown: " + mHasConsumedDown);
+                    Log.d(TAG, "touch event finish consumedDown: " + mHasConsumedDown);
                 }
+                break;
+            default:
+                break;
         }
         return super.onTouchEvent(ev);
     }
-    //endregion
-
-    //region helper methods
 
     private void updateTouchDirection ( MotionEvent ev ) {
         if (mActivePointerId != -1) {
@@ -333,12 +331,12 @@ public class RuledScrollView extends ScrollView {
                 mTouchAxis = Math.abs(dY) - Math.abs(dX);
                 if (mTouchAxis > 0) {
                     if (LOG_ENABLED) {
-                        Log.v(RuledScrollView.class.getSimpleName(), "direction: " + mTouchDirection + " --> " + dY);
+                        Log.v(TAG, "direction: " + mTouchDirection + " --> " + dY);
                     }
                     mTouchDirection = dY;
                 } else {
                     if (LOG_ENABLED) {
-                        Log.v(RuledScrollView.class.getSimpleName(), "direction: " + mTouchDirection + " --> " + dX);
+                        Log.v(TAG, "direction: " + mTouchDirection + " --> " + dX);
                     }
                     mTouchDirection = dX;
                 }
@@ -347,7 +345,7 @@ public class RuledScrollView extends ScrollView {
     }
 
     /**
-     * store new primary pointer if first pointer was removed
+     * Store new primary pointer if first pointer was removed.
      *
      * @param ev triggered POINTER_UP event
      */
@@ -365,7 +363,7 @@ public class RuledScrollView extends ScrollView {
     }
 
     /**
-     * recursive method to determine if an child view can scroll and event coordinates are withing its view boundaries
+     * Recursive method to determine if an child view can scroll and event coordinates are withing its view boundaries.
      *
      * @param vg   the ViewGroup's children will be checked
      * @param rawX event raw x coordinate
@@ -374,7 +372,7 @@ public class RuledScrollView extends ScrollView {
      */
     protected boolean oneChildCanScroll ( ViewGroup vg, int rawX, int rawY ) {
         if (LOG_ENABLED) {
-            Log.d(RuledScrollView.class.getSimpleName(), "vg: " + vg);
+            Log.d(TAG, "vg: " + vg);
         }
         View child;
         ArrayList<ViewGroup> parents = new ArrayList<>();
@@ -387,13 +385,13 @@ public class RuledScrollView extends ScrollView {
             for (int i = 0; i < vg.getChildCount(); i++) {
                 child = vg.getChildAt(i);
                 if (LOG_ENABLED) {
-                    Log.d(RuledScrollView.class.getSimpleName(), " --> child: " + child);
+                    Log.d(TAG, " --> child: " + child);
                 }
                 if (isInViewBounds(child, rawX, rawY) && isVisible(child)) {
-                    if((mTouchAxis < 0 && Rule.canViewScrollHorizontal(child, mTouchDirection)) ||
-                       (mTouchAxis >= 0 && Rule.canViewScrollVertical(child, mTouchDirection))) {
+                    if ((mTouchAxis < 0 && Rule.canViewScrollHorizontal(child, mTouchDirection))
+                            || (mTouchAxis >= 0 && Rule.canViewScrollVertical(child, mTouchDirection))) {
                         return true;
-                    } else if(child instanceof ViewGroup && ((ViewGroup) child).getChildCount() > 0) {
+                    } else if (child instanceof ViewGroup && ((ViewGroup) child).getChildCount() > 0) {
                         // only check parents that are visible and within view bounds
                         parents.add((ViewGroup) child);
                     }
@@ -403,7 +401,7 @@ public class RuledScrollView extends ScrollView {
 
         // check all view children and their children (start recursion)
         for (ViewGroup parent : parents) {
-            if(oneChildCanScroll(parent, rawX, rawY)) {
+            if (oneChildCanScroll(parent, rawX, rawY)) {
                 return true;
             }
         }
@@ -411,11 +409,4 @@ public class RuledScrollView extends ScrollView {
 
         return false;
     }
-
-//    private boolean viewHitsDownPoint (View view) {
-//        if(view != null && mDownPoint != null) {
-//
-//        }
-//    }
-    //endregion
 }

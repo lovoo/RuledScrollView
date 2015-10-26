@@ -1,5 +1,6 @@
 package de.mario222k.ruledscrollview.example;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -14,6 +15,9 @@ import android.widget.RadioGroup;
 import de.mario222k.ruledscrollview.lib.Rule;
 import de.mario222k.ruledscrollview.lib.RuledScrollView;
 
+/**
+ * Activity for Library-Example-Showcase.
+ */
 public class VerticalScrollActivity extends Activity {
 
     private RuledScrollView mScrollView;
@@ -56,15 +60,23 @@ public class VerticalScrollActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void showRuleConfigDialog( final View target) {
-        if(target != null) {
+    private void showRuleConfigDialog ( final View target ) {
+        if (target != null) {
+            @SuppressLint("InflateParams")
             final ViewGroup layout = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.layout_rule_dialog, null);
 
             Rule activeRule = Rule.getRuleFromView(target);
-            ((RadioGroup) layout.findViewById(R.id.radio_group_left)).check(getIdFromRule(activeRule.getRuleForDirection(Rule.RULE_DIRECTION_LEFT)));
-            ((RadioGroup) layout.findViewById(R.id.radio_group_top)).check(getIdFromRule(activeRule.getRuleForDirection(Rule.RULE_DIRECTION_UP)));
-            ((RadioGroup) layout.findViewById(R.id.radio_group_right)).check(getIdFromRule(activeRule.getRuleForDirection(Rule.RULE_DIRECTION_RIGHT)));
-            ((RadioGroup) layout.findViewById(R.id.radio_group_bottom)).check(getIdFromRule(activeRule.getRuleForDirection(Rule.RULE_DIRECTION_DOWN)));
+            final RadioGroup radioLeft = (RadioGroup) layout.findViewById(R.id.radio_group_left);
+            radioLeft.check(getIdFromRule(activeRule.getRuleForDirection(Rule.RULE_DIRECTION_LEFT)));
+
+            final RadioGroup radioTop = (RadioGroup) layout.findViewById(R.id.radio_group_top);
+            radioTop.check(getIdFromRule(activeRule.getRuleForDirection(Rule.RULE_DIRECTION_UP)));
+
+            final RadioGroup radioRight = (RadioGroup) layout.findViewById(R.id.radio_group_right);
+            radioRight.check(getIdFromRule(activeRule.getRuleForDirection(Rule.RULE_DIRECTION_RIGHT)));
+
+            final RadioGroup radioBottom = (RadioGroup) layout.findViewById(R.id.radio_group_bottom);
+            radioBottom.check(getIdFromRule(activeRule.getRuleForDirection(Rule.RULE_DIRECTION_DOWN)));
 
             final AlertDialog.Builder b = new AlertDialog.Builder(this);
             b.setTitle("set Rule for: " + target.getClass().getSimpleName());
@@ -74,10 +86,10 @@ public class VerticalScrollActivity extends Activity {
             b.setPositiveButton("Activate", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick ( DialogInterface dialog, int which ) {
-                    int left = getRuleFromId(((RadioGroup) layout.findViewById(R.id.radio_group_left)).getCheckedRadioButtonId());
-                    int top = getRuleFromId(((RadioGroup) layout.findViewById(R.id.radio_group_top)).getCheckedRadioButtonId());
-                    int right = getRuleFromId(((RadioGroup) layout.findViewById(R.id.radio_group_right)).getCheckedRadioButtonId());
-                    int bottom = getRuleFromId(((RadioGroup) layout.findViewById(R.id.radio_group_bottom)).getCheckedRadioButtonId());
+                    int left = getRuleFromId(radioLeft.getCheckedRadioButtonId());
+                    int top = getRuleFromId(radioTop.getCheckedRadioButtonId());
+                    int right = getRuleFromId(radioRight.getCheckedRadioButtonId());
+                    int bottom = getRuleFromId(radioBottom.getCheckedRadioButtonId());
 
                     Rule.setRuleForView(target, new Rule(left, top, right, bottom));
                 }
@@ -86,7 +98,7 @@ public class VerticalScrollActivity extends Activity {
         }
     }
 
-    private int getIdFromRule (int ruleHandle) {
+    private int getIdFromRule ( int ruleHandle ) {
         switch (ruleHandle) {
             case Rule.RULE_HANDLE_NEVER:
                 return R.id.radio_never;
@@ -98,7 +110,7 @@ public class VerticalScrollActivity extends Activity {
         }
     }
 
-    private int getRuleFromId (int id) {
+    private int getRuleFromId ( int id ) {
         switch (id) {
             case R.id.radio_never:
                 return Rule.RULE_HANDLE_NEVER;
