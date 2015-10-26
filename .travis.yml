@@ -1,4 +1,10 @@
 language: android
+
+branches:
+  only: master
+
+script: ./gradlew :rsv_example:assembleRelease
+
 android:
   components:
     # Uncomment the lines below if you want to
@@ -7,10 +13,10 @@ android:
     # - tools
 
     # The BuildTools version used by your project
-    - build-tools-21.1.1
+    - build-tools-23.0.1
 
     # The SDK version used to compile your project
-    - android-21
+    - android-23
 
     # Additional components
     - extra-android-support
