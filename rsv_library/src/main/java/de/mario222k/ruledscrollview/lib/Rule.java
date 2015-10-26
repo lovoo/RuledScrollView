@@ -83,7 +83,7 @@ public class Rule {
      *
      * @param view      target view that rule will be checked
      * @param direction currently used move direction
-     * @return {@code true} if current role is {@code RULE_HANDLE_ALWAYS} || {@code RULE_HANDLE_IGNORE_CHILDREN}, {@code false} otherwise
+     * @return {@code true} if current rule is {@code RULE_HANDLE_ALWAYS} || {@code RULE_HANDLE_IGNORE_CHILDREN}, {@code false} otherwise
      */
     public static boolean ignoreChildrenForDirection ( View view, int direction ) {
         Rule rule = getRuleFromView(view);
@@ -96,7 +96,7 @@ public class Rule {
      *
      * @param view      target view that will be checked
      * @param leftRight currently used move direction
-     * @return {@code true} if current role allows scroll in this direction, {@code false} otherwise
+     * @return {@code true} if current rule allows scroll in this direction, {@code false} otherwise
      */
     @SuppressWarnings("SimplifiableIfStatement")
     public static boolean canViewScrollHorizontal ( View view, int leftRight ) {
@@ -185,9 +185,9 @@ public class Rule {
     }
 
     /**
-     * Helps to store current role.
+     * Helps to store current rule.
      *
-     * @return integer with active role
+     * @return integer with active rule
      */
     public int exportConfig () {
         int config = 0;
