@@ -40,4 +40,4 @@ env:
 
 after_success:
   # run bintray upload straight after deploy
-  - ./gradlew --info clean build bintrayUpload -PbintrayUser=USER -PbintrayKey=KEY -PdryRun=false
+  - gradle bintrayUpload -PbintrayUser=$USER -PbintrayKey=$KEY -PdryRun=false
