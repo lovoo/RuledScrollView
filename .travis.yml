@@ -31,3 +31,11 @@ android:
     # if you need to run emulator(s) during your tests
     # - sys-img-armeabi-v7a-android-19
     # - sys-img-x86-android-17
+
+deploy:
+  - ./gradle clean build bintrayUpload -PbintrayUser=USER -PbintrayKey=KEY -PdryRun=false
+
+env:
+  global:
+  - secure: PzCt2l8yfDxtObEz5EawtjPw8ojmstnsivAmbp6cMpshT2qsrwBAItUCtE6xPt6eX3cCCKpnVSy1mAsz9Vbj2s/w9Pb7G6tZqiUrqmpIWKXwAUzInycIVrzHRAFyZzXa6uCIIwx5NhxhKaGUh/hXynpXXphWofaeZX+QommCvLw=
+  - secure: d2MfgHvReYH+fA3sgkiAXNBPsnkPj/8h1N7V8Ly0tGbbaT15qC8OYN4hmuo6NdaUmkTMycJqRn9Bu9VP0MDvEL6+uGiaESsYcpkYoSoNyadSRyYt9L9XRcZw2I2GMejwZ9ma2UUQNDnqLGtGVQBMEPAzTQiFzO4L8PVzje3Gq5g=
