@@ -35,7 +35,7 @@ android:
 env:
   global:
   # define critical vars
-  - secure: PzCt2l8yfDxtObEz5EawtjPw8ojmstnsivAmbp6cMpshT2qsrwBAItUCtE6xPt6eX3cCCKpnVSy1mAsz9Vbj2s/w9Pb7G6tZqiUrqmpIWKXwAUzInycIVrzHRAFyZzXa6uCIIwx5NhxhKaGUh/hXynpXXphWofaeZX+QommCvLw=
+  - secure: qzMqFQjccg3xpTzySreMdRny48yt3/Rst3jJNwzg+yJDC6mtgOE9AL3sV7oyQsI6eZwdP6VWc3RFPbZ+k5a6joqcLhb+XwXEJ+8EiL6u6DhCZWGDosiOq+TTJdpZidlqzZFFqhvlTCKDBGgyf8Wj4XAtm2blb0BXbsMxNUUAsrk=
   - secure: lkO0z+g7FrcIGM8xp/r0l+TXI7NnpjrJ0dWFG8+bvV/Tm03LTH+M/eAYiMCNTcFQ1uKpZVROeAj9OSkBsX3JorLSTb/mBLcoqcscUUHoyOY3auok45QuWIAqPkwbByzlgFfrdpqSc3AfxHcbbY8YWhHOj2YggxtJkTLsxQl0gCM=
 
 after_success:
