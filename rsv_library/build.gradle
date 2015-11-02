@@ -26,7 +26,7 @@ dependencies {
 
 publish {
     groupId = 'de.mario222k'
-    artifactId = 'ruledscrollview'
+    artifactId = 'RuledScrollView'
     version = '1.0.1'
     description = 'Android ScrollView implementation with additional touch-interception-rules.'
     website = 'https://github.com/mario222k/RuledScrollView'
