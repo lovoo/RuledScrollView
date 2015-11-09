@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/lovoo/RuledScrollView.svg?branch=master)](https://travis-ci.org/lovoo/RuledScrollView)
+[![Build Status](https://travis-ci.org/Lovoo/RuledScrollView.svg?branch=master)](https://travis-ci.org/Lovoo/RuledScrollView)
 [![Download](https://api.bintray.com/packages/lovoo/maven/RuledScrollView/images/download.svg) ](https://bintray.com/lovoo/maven/RuledScrollView/_latestVersion)
 RuledScrollView
 ===============
