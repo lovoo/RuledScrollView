@@ -1,7 +1,7 @@
-package de.mario222k.ruledscrollview.lib;
+package com.lovoo.ruledscrollview.lib;
 
 /**
- * Custom ScrollView that handle {@link android.view.MotionEvent} for its children with a configured {@link de.mario222k.ruledscrollview.lib.Rule} .
+ * Custom ScrollView that handle {@link android.view.MotionEvent} for its children with a configured {@link com.lovoo.ruledscrollview.lib.Rule} .
  * Created by mariokreussel on 29.10.14.
  */
 

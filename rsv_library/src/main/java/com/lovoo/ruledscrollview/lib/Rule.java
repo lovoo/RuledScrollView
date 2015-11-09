@@ -1,4 +1,4 @@
-package de.mario222k.ruledscrollview.lib;
+package com.lovoo.ruledscrollview.lib;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

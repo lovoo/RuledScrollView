@@ -1,4 +1,4 @@
-package de.mario222k.ruledscrollview.example;
+package com.lovoo.ruledscrollview.example;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
 
-import de.mario222k.ruledscrollview.lib.Rule;
-import de.mario222k.ruledscrollview.lib.RuledScrollView;
+import com.lovoo.ruledscrollview.lib.Rule;
+import com.lovoo.ruledscrollview.lib.RuledScrollView;
 
 /**
  * Activity for Library-Example-Showcase.

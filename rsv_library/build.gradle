@@ -9,7 +9,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 1
-        versionName "1.0.1"
+        versionName "1.0.2"
     }
     buildTypes {
         release {
@@ -25,11 +25,12 @@ dependencies {
 }
 
 publish {
-    groupId = 'de.mario222k'
+    userOrg = 'lovoo'
+    groupId = 'com.lovoo'
     artifactId = 'RuledScrollView'
-    version = '1.0.1'
+    version = '1.0.2'
     description = 'Android ScrollView implementation with additional touch-interception-rules.'
-    website = 'https://github.com/mario222k/RuledScrollView'
-    issueTracker = "https://github.com/mario222k/RuledScrollView/issues"
-    repository = "https://github.com/mario222k/RuledScrollView.git"
+    website = 'https://github.com/Lovoo/RuledScrollView'
+    issueTracker = "https://github.com/Lovoo/RuledScrollView/issues"
+    repository = "https://github.com/Lovoo/RuledScrollView.git"
 }

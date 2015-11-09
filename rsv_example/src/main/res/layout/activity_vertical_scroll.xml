@@ -2,7 +2,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" >
 
-    <de.mario222k.ruledscrollview.lib.RuledScrollView
+    <com.lovoo.ruledscrollview.lib.RuledScrollView
         android:id="@+id/ruled_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -64,6 +64,6 @@
 
         </LinearLayout>
 
-    </de.mario222k.ruledscrollview.lib.RuledScrollView>
+    </com.lovoo.ruledscrollview.lib.RuledScrollView>
 
 </RelativeLayout>

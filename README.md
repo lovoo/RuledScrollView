@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/mario222k/RuledScrollView.svg?branch=master)](https://travis-ci.org/mario222k/RuledScrollView)
-[![Download](https://api.bintray.com/packages/mario222k/maven/RuledScrollView/images/download.svg) ](https://bintray.com/mario222k/maven/RuledScrollView/_latestVersion)
+[![Build Status](https://travis-ci.org/lovoo/RuledScrollView.svg?branch=master)](https://travis-ci.org/mario222k/RuledScrollView)
+[![Download](https://api.bintray.com/packages/lovoo/maven/RuledScrollView/images/download.svg) ](https://bintray.com/mario222k/maven/RuledScrollView/_latestVersion)
 RuledScrollView
 ===============
 
